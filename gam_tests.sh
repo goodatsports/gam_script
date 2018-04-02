@@ -22,21 +22,17 @@ EOF
          read -sp "Enter new password: " PASS
          printf "\n"
          gam create user "$USR" firstname "$FIRSTNAME" lastname "$LASTNAME" password "$PASS" 
-         echo "User $USR successfully created"
-         printf "\n" ;;
-    
+         printf "User $USR successfully created\n" ;;
     "2") read -p "$USERPROMPT" USR
          gam print groups member "$USR@$DOMAIN" && printf "\n" ;;
     "3") read -p "$USERPROMPT" USR
          read -p "Enter group name: " GROUP
-         gam update group $GROUP add member "$USR@$DOMAIN" 
-         printf "\n" ;;
+         gam update group $GROUP add member "$USR@$DOMAIN" && printf "\n" ;;
     "4") read -p "$USERPROMPT" USR
          read -p "*** WARNING *** This will remove user $USR from ALL $DOMAIN Gmail groups. 
-            Are you sure you want to do this? (y/n):" CONFIRM
+            Are you sure you want to do this? (type yes to confirm): " CONFIRM
          case "$CONFIRM" in
-         ["Yy"]) gam print groups | gam csv - gam update group ~Email delete "$USR@$DOMAIN" ;;
-             * ) break           ;;
+         "yes"| "YES") gam user "$USR@$DOMAIN" delete groups;;
          esac                    ;;
     "5") exit                    ;;
      * )  echo "Invalid option"  ;;
